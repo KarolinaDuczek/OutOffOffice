@@ -29,6 +29,7 @@ namespace OutOfOffice_web.Data
                 .IsRequired();
             builder.Entity<Employee>()
                 .Property(e => e.FullName)
+                .HasMaxLength(50)
                 .IsRequired();
             builder.Entity<Employee>()
                 .Property(e => e.Subdivision)
@@ -93,6 +94,7 @@ namespace OutOfOffice_web.Data
                 .HasOne(approval=>approval.LeaveRequest)
                 .WithOne(leave=>leave.ApprovalRequest)
                 .HasForeignKey<ApprovalRequest>(req=>req.LeaveRequestId)
+                .OnDelete(DeleteBehavior.NoAction)
                 .IsRequired();
             builder.Entity<ApprovalRequest>()
                 .HasOne(approval => approval.Approver)
@@ -124,12 +126,11 @@ namespace OutOfOffice_web.Data
                 .Property(e => e.Status)
                 .IsRequired();
 
-            builder.Entity<Project>()
-                .HasOne(project => project.ProjectManager)
-                .WithOne(employee => employee.Project)
-                .HasForeignKey<Employee>(employee => employee.Id)
+            builder.Entity<Employee>()
+                .HasOne(e => e.Project)
+                .WithOne(p => p.ProjectManager)
+                .HasForeignKey<Project>(p=>p.ProjectManagerId)
                 .IsRequired();
-
         }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }

@@ -12,15 +12,15 @@ using OutOfOffice_web.Data;
 namespace OutOfOffice_web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240712150806_AddLeaverequestEmployeeRelationship")]
-    partial class AddLeaverequestEmployeeRelationship
+    [Migration("20240715101805_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -197,20 +197,26 @@ namespace OutOfOffice_web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Approver")
+                    b.Property<int>("ApproverId")
                         .HasColumnType("int");
 
                     b.Property<string>("Comment")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("LeaveRequest")
+                    b.Property<int>("LeaveRequestId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApproverId")
+                        .IsUnique();
+
+                    b.HasIndex("LeaveRequestId")
+                        .IsUnique();
 
                     b.ToTable("ApprovalRequests");
                 });
@@ -295,7 +301,7 @@ namespace OutOfOffice_web.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("ProjectMenager")
+                    b.Property<int>("ProjectManagerId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProjectType")
@@ -309,7 +315,29 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProjectManagerId")
+                        .IsUnique();
+
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("OutOfOffice_web.Models.ApprovalRequest", b =>
+                {
+                    b.HasOne("OutOfOffice_web.Models.Employee", "Approver")
+                        .WithOne("ApprovalRequest")
+                        .HasForeignKey("OutOfOffice_web.Models.ApprovalRequest", "ApproverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OutOfOffice_web.Models.LeaveRequest", "LeaveRequest")
+                        .WithOne("ApprovalRequest")
+                        .HasForeignKey("OutOfOffice_web.Models.ApprovalRequest", "LeaveRequestId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Approver");
+
+                    b.Navigation("LeaveRequest");
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.LeaveRequest", b =>
@@ -323,9 +351,30 @@ namespace OutOfOffice_web.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("OutOfOffice_web.Models.Project", b =>
+                {
+                    b.HasOne("OutOfOffice_web.Models.Employee", "ProjectManager")
+                        .WithOne("Project")
+                        .HasForeignKey("OutOfOffice_web.Models.Project", "ProjectManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectManager");
+                });
+
             modelBuilder.Entity("OutOfOffice_web.Models.Employee", b =>
                 {
+                    b.Navigation("ApprovalRequest");
+
                     b.Navigation("LeaveRequests");
+
+                    b.Navigation("Project")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OutOfOffice_web.Models.LeaveRequest", b =>
+                {
+                    b.Navigation("ApprovalRequest");
                 });
 #pragma warning restore 612, 618
         }

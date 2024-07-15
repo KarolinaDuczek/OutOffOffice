@@ -17,7 +17,7 @@ namespace OutOfOffice_web.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -38,7 +38,7 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -60,7 +60,7 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoleClaims");
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
@@ -112,7 +112,7 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -134,7 +134,7 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserClaims");
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -153,7 +153,7 @@ namespace OutOfOffice_web.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("UserLogins");
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -164,7 +164,7 @@ namespace OutOfOffice_web.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -183,7 +183,7 @@ namespace OutOfOffice_web.Migrations
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("UserTokens");
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.ApprovalRequest", b =>
@@ -215,7 +215,7 @@ namespace OutOfOffice_web.Migrations
                     b.HasIndex("LeaveRequestId")
                         .IsUnique();
 
-                    b.ToTable("ApprovalRequests");
+                    b.ToTable("ApprovalRequests", (string)null);
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.Employee", b =>
@@ -224,8 +224,12 @@ namespace OutOfOffice_web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("FullName")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<double>("OutOfOfficeBalance")
                         .HasColumnType("float");
@@ -244,7 +248,7 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.LeaveRequest", b =>
@@ -278,7 +282,7 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("LeaveRequests");
+                    b.ToTable("LeaveRequests", (string)null);
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.Project", b =>
@@ -310,7 +314,10 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects");
+                    b.HasIndex("ProjectManagerId")
+                        .IsUnique();
+
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.ApprovalRequest", b =>
@@ -324,23 +331,12 @@ namespace OutOfOffice_web.Migrations
                     b.HasOne("OutOfOffice_web.Models.LeaveRequest", "LeaveRequest")
                         .WithOne("ApprovalRequest")
                         .HasForeignKey("OutOfOffice_web.Models.ApprovalRequest", "LeaveRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Approver");
 
                     b.Navigation("LeaveRequest");
-                });
-
-            modelBuilder.Entity("OutOfOffice_web.Models.Employee", b =>
-                {
-                    b.HasOne("OutOfOffice_web.Models.Project", "Project")
-                        .WithOne("ProjectManager")
-                        .HasForeignKey("OutOfOffice_web.Models.Employee", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.LeaveRequest", b =>
@@ -354,21 +350,30 @@ namespace OutOfOffice_web.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("OutOfOffice_web.Models.Project", b =>
+                {
+                    b.HasOne("OutOfOffice_web.Models.Employee", "ProjectManager")
+                        .WithOne("Project")
+                        .HasForeignKey("OutOfOffice_web.Models.Project", "ProjectManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectManager");
+                });
+
             modelBuilder.Entity("OutOfOffice_web.Models.Employee", b =>
                 {
                     b.Navigation("ApprovalRequest");
 
                     b.Navigation("LeaveRequests");
+
+                    b.Navigation("Project")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.LeaveRequest", b =>
                 {
                     b.Navigation("ApprovalRequest");
-                });
-
-            modelBuilder.Entity("OutOfOffice_web.Models.Project", b =>
-                {
-                    b.Navigation("ProjectManager");
                 });
 #pragma warning restore 612, 618
         }

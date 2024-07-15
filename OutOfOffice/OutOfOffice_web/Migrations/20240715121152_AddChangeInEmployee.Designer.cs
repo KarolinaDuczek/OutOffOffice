@@ -12,15 +12,15 @@ using OutOfOffice_web.Data;
 namespace OutOfOffice_web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240715065729_AddEntitiesRelationships")]
-    partial class AddEntitiesRelationships
+    [Migration("20240715121152_AddChangeInEmployee")]
+    partial class AddChangeInEmployee
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -227,8 +227,12 @@ namespace OutOfOffice_web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("FullName")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<double>("OutOfOfficeBalance")
                         .HasColumnType("float");
@@ -313,6 +317,9 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProjectManagerId")
+                        .IsUnique();
+
                     b.ToTable("Projects");
                 });
 
@@ -327,23 +334,12 @@ namespace OutOfOffice_web.Migrations
                     b.HasOne("OutOfOffice_web.Models.LeaveRequest", "LeaveRequest")
                         .WithOne("ApprovalRequest")
                         .HasForeignKey("OutOfOffice_web.Models.ApprovalRequest", "LeaveRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Approver");
 
                     b.Navigation("LeaveRequest");
-                });
-
-            modelBuilder.Entity("OutOfOffice_web.Models.Employee", b =>
-                {
-                    b.HasOne("OutOfOffice_web.Models.Project", "Project")
-                        .WithOne("ProjectManager")
-                        .HasForeignKey("OutOfOffice_web.Models.Employee", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.LeaveRequest", b =>
@@ -357,21 +353,30 @@ namespace OutOfOffice_web.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("OutOfOffice_web.Models.Project", b =>
+                {
+                    b.HasOne("OutOfOffice_web.Models.Employee", "ProjectManager")
+                        .WithOne("Project")
+                        .HasForeignKey("OutOfOffice_web.Models.Project", "ProjectManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectManager");
+                });
+
             modelBuilder.Entity("OutOfOffice_web.Models.Employee", b =>
                 {
                     b.Navigation("ApprovalRequest");
 
                     b.Navigation("LeaveRequests");
+
+                    b.Navigation("Project")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.LeaveRequest", b =>
                 {
                     b.Navigation("ApprovalRequest");
-                });
-
-            modelBuilder.Entity("OutOfOffice_web.Models.Project", b =>
-                {
-                    b.Navigation("ProjectManager");
                 });
 #pragma warning restore 612, 618
         }

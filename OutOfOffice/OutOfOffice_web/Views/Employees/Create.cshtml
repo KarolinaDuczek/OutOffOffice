@@ -1,0 +1,77 @@
+﻿@model OutOfOffice_web.Models.Employee
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Employee</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label">Full Name</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subdivision" class="control-label"></label>
+                <select asp-for="Subdivision" class="form-control">
+                    <option disabled selected>--- Select ---</option>
+                    <option value="HR">HR</option>
+                    <option value="Financial">Financial</option>
+                    <option value="IT">IT</option>
+                    <option value="Production">Production</option>
+                    <option value="ProductionSetUp">Production Set-up</option>
+                </select>
+                <span asp-validation-for="Subdivision" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Position" class="control-label"></label>
+                <select asp-for="Position" class="form-control">
+                    <option disabled selected>--- Select ---</option>
+                    <option value="Specialist">Specialist</option>
+                    <option value="Manager">Manager</option>
+                    <option value="HRmanager">HR Manager</option>
+                    <option value="CEO">CEO</option>
+                    <option value="SeniorSpecialist">Senior Specialist</option>
+                    <option value="Intern">Intern</option>
+                </select>
+                <span asp-validation-for="Position" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <select asp-for="Status" class="form-control">
+                    <option disabled selected>--- Select ---</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PeoplePartner" class="control-label">People Partner</label>
+                <input asp-for="PeoplePartner" class="form-control" />
+                <span asp-validation-for="PeoplePartner" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OutOfOfficeBalance" class="control-label">Out Of Office Balance</label>
+                <input asp-for="OutOfOfficeBalance" class="form-control" />
+                <span asp-validation-for="OutOfOfficeBalance" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

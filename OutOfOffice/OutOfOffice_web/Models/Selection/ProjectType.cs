@@ -2,5 +2,9 @@
 {
     public enum ProjectType
     {
+        engineering,
+        production,
+        IT,
+        Scientific
     }
 }
