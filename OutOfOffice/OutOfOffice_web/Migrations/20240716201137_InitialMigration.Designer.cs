@@ -12,7 +12,7 @@ using OutOfOffice_web.Data;
 namespace OutOfOffice_web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240715101805_InitialMigration")]
+    [Migration("20240716201137_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -229,13 +229,15 @@ namespace OutOfOffice_web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("FullName")
-                        .HasColumnType("int");
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<double>("OutOfOfficeBalance")
                         .HasColumnType("float");
 
-                    b.Property<int>("PeoplePartner")
+                    b.Property<int?>("PeoplePartnerId")
                         .HasColumnType("int");
 
                     b.Property<int>("Position")
@@ -248,6 +250,8 @@ namespace OutOfOffice_web.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PeoplePartnerId");
 
                     b.ToTable("Employees");
                 });
@@ -286,6 +290,23 @@ namespace OutOfOffice_web.Migrations
                     b.ToTable("LeaveRequests");
                 });
 
+            modelBuilder.Entity("OutOfOffice_web.Models.PeoplePartner", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PeoplePartners");
+                });
+
             modelBuilder.Entity("OutOfOffice_web.Models.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -315,8 +336,7 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectManagerId")
-                        .IsUnique();
+                    b.HasIndex("ProjectManagerId");
 
                     b.ToTable("Projects");
                 });
@@ -340,6 +360,15 @@ namespace OutOfOffice_web.Migrations
                     b.Navigation("LeaveRequest");
                 });
 
+            modelBuilder.Entity("OutOfOffice_web.Models.Employee", b =>
+                {
+                    b.HasOne("OutOfOffice_web.Models.PeoplePartner", "PeoplePartner")
+                        .WithMany("PartnerEmployees")
+                        .HasForeignKey("PeoplePartnerId");
+
+                    b.Navigation("PeoplePartner");
+                });
+
             modelBuilder.Entity("OutOfOffice_web.Models.LeaveRequest", b =>
                 {
                     b.HasOne("OutOfOffice_web.Models.Employee", "Employee")
@@ -354,8 +383,8 @@ namespace OutOfOffice_web.Migrations
             modelBuilder.Entity("OutOfOffice_web.Models.Project", b =>
                 {
                     b.HasOne("OutOfOffice_web.Models.Employee", "ProjectManager")
-                        .WithOne("Project")
-                        .HasForeignKey("OutOfOffice_web.Models.Project", "ProjectManagerId")
+                        .WithMany("ManagerProjects")
+                        .HasForeignKey("ProjectManagerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -368,13 +397,17 @@ namespace OutOfOffice_web.Migrations
 
                     b.Navigation("LeaveRequests");
 
-                    b.Navigation("Project")
-                        .IsRequired();
+                    b.Navigation("ManagerProjects");
                 });
 
             modelBuilder.Entity("OutOfOffice_web.Models.LeaveRequest", b =>
                 {
                     b.Navigation("ApprovalRequest");
+                });
+
+            modelBuilder.Entity("OutOfOffice_web.Models.PeoplePartner", b =>
+                {
+                    b.Navigation("PartnerEmployees");
                 });
 #pragma warning restore 612, 618
         }

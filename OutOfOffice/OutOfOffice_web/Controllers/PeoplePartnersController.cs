@@ -10,23 +10,22 @@ using OutOfOffice_web.Models;
 
 namespace OutOfOffice_web.Controllers
 {
-    public class ProjectsController : Controller
+    public class PeoplePartnersController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ProjectsController(ApplicationDbContext context)
+        public PeoplePartnersController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Projects
+        // GET: PeoplePartners
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Projects.Include(p => p.ProjectManager);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.PeoplePartners.ToListAsync());
         }
 
-        // GET: Projects/Details/5
+        // GET: PeoplePartners/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,44 +33,39 @@ namespace OutOfOffice_web.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects
-                .Include(p => p.ProjectManager)
+            var peoplePartner = await _context.PeoplePartners
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
+            if (peoplePartner == null)
             {
                 return NotFound();
             }
 
-            return View(project);
+            return View(peoplePartner);
         }
 
-        // GET: Projects/Create
+        // GET: PeoplePartners/Create
         public IActionResult Create()
         {
-            ViewData["ProjectManagerId"] = new SelectList(_context.Employees.Where(e=>e.Position==Models.Selection.Position.ProjectManager), "Id", "FullName");
             return View();
         }
 
-        // POST: Projects/Create
+        // POST: PeoplePartners/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ProjectType,StartDate,EndDate,ProjectManagerId,Comment,Status")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,FullName")] PeoplePartner peoplePartner)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(project);
+                _context.Add(peoplePartner);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewData["ProjectManagerId"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.ProjectManager), "Id", "FullName", project.ProjectManagerId);
-
-            return View(project);
+            return View(peoplePartner);
         }
 
-        // GET: Projects/Edit/5
+        // GET: PeoplePartners/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -79,23 +73,22 @@ namespace OutOfOffice_web.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
+            var peoplePartner = await _context.PeoplePartners.FindAsync(id);
+            if (peoplePartner == null)
             {
                 return NotFound();
             }
-            ViewData["ProjectManagerId"] = new SelectList(_context.Employees.Where(e=>e.Position==Models.Selection.Position.ProjectManager), "Id", "FullName", project.ProjectManagerId);
-            return View(project);
+            return View(peoplePartner);
         }
 
-        // POST: Projects/Edit/5
+        // POST: PeoplePartners/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectType,StartDate,EndDate,ProjectManagerId,Comment,Status")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName")] PeoplePartner peoplePartner)
         {
-            if (id != project.Id)
+            if (id != peoplePartner.Id)
             {
                 return NotFound();
             }
@@ -104,12 +97,12 @@ namespace OutOfOffice_web.Controllers
             {
                 try
                 {
-                    _context.Update(project);
+                    _context.Update(peoplePartner);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectExists(project.Id))
+                    if (!PeoplePartnerExists(peoplePartner.Id))
                     {
                         return NotFound();
                     }
@@ -120,11 +113,10 @@ namespace OutOfOffice_web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProjectManagerId"] = new SelectList(_context.Employees.Where(e=>e.Position == Models.Selection.Position.ProjectManager), "Id", "FullName", project.ProjectManagerId);
-            return View(project);
+            return View(peoplePartner);
         }
 
-        // GET: Projects/Delete/5
+        // GET: PeoplePartners/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -132,35 +124,34 @@ namespace OutOfOffice_web.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects
-                .Include(p => p.ProjectManager)
+            var peoplePartner = await _context.PeoplePartners
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
+            if (peoplePartner == null)
             {
                 return NotFound();
             }
 
-            return View(project);
+            return View(peoplePartner);
         }
 
-        // POST: Projects/Delete/5
+        // POST: PeoplePartners/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            if (project != null)
+            var peoplePartner = await _context.PeoplePartners.FindAsync(id);
+            if (peoplePartner != null)
             {
-                _context.Projects.Remove(project);
+                _context.PeoplePartners.Remove(peoplePartner);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProjectExists(int id)
+        private bool PeoplePartnerExists(int id)
         {
-            return _context.Projects.Any(e => e.Id == id);
+            return _context.PeoplePartners.Any(e => e.Id == id);
         }
     }
 }

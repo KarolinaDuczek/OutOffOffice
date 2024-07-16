@@ -22,7 +22,7 @@ namespace OutOfOffice_web.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Employees.Include(e => e.Project);
+            var applicationDbContext = _context.Employees.Include(e => e.ManagerProjects);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace OutOfOffice_web.Controllers
             }
 
             var employee = await _context.Employees
-                .Include(e => e.Project)
+                .Include(e => e.ManagerProjects)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
@@ -49,6 +49,8 @@ namespace OutOfOffice_web.Controllers
         public IActionResult Create()
         {
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id");
+            ViewData["PeoplePartner"] = new SelectList(_context.Employees.Where(e=>e.Position==Models.Selection.Position.HRmanager), "Id", "FullName");
+
             return View();
         }
 
@@ -66,6 +68,10 @@ namespace OutOfOffice_web.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id", employee.Id);
+            //ViewData["PeoplePartner"] = new SelectList(_context.PeoplePartners, "Id", "FullName", employee.PeoplePartner);
+            ViewData["PeoplePartner"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartnerId);
+
+
             return View(employee);
         }
 
@@ -83,6 +89,10 @@ namespace OutOfOffice_web.Controllers
                 return NotFound();
             }
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id", employee.Id);
+            //ViewData["PeoplePartner"] = new SelectList(_context.PeoplePartners, "Id", "FullName", employee.PeoplePartner);
+            ViewData["PeoplePartner"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName");
+
+
             return View(employee);
         }
 
@@ -91,7 +101,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Subdivision,Position,Status,PeoplePartner,OutOfOfficeBalance")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Subdivision,Position,Status,PeoplePartnerId,OutOfOfficeBalance")] Employee employee)
         {
             if (id != employee.Id)
             {
@@ -119,6 +129,10 @@ namespace OutOfOffice_web.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id", employee.Id);
+            //ViewData["PeoplePartner"] = new SelectList(_context.PeoplePartners, "Id", "FullName", employee.PeoplePartner);
+            ViewData["PeoplePartnerId"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartnerId);
+
+
             return View(employee);
         }
 
@@ -131,7 +145,7 @@ namespace OutOfOffice_web.Controllers
             }
 
             var employee = await _context.Employees
-                .Include(e => e.Project)
+                .Include(e => e.ManagerProjects)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {

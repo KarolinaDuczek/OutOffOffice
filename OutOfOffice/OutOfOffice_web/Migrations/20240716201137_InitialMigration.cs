@@ -12,21 +12,16 @@ namespace OutOfOffice_web.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Employees",
+                name: "PeoplePartners",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<int>(type: "int", nullable: false),
-                    Subdivision = table.Column<int>(type: "int", nullable: false),
-                    Position = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    PeoplePartner = table.Column<int>(type: "int", nullable: false),
-                    OutOfOfficeBalance = table.Column<double>(type: "float", nullable: false)
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.PrimaryKey("PK_PeoplePartners", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -136,6 +131,29 @@ namespace OutOfOffice_web.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Subdivision = table.Column<int>(type: "int", nullable: false),
+                    Position = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    PeoplePartnerId = table.Column<int>(type: "int", nullable: true),
+                    OutOfOfficeBalance = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Employees_PeoplePartners_PeoplePartnerId",
+                        column: x => x.PeoplePartnerId,
+                        principalTable: "PeoplePartners",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LeaveRequests",
                 columns: table => new
                 {
@@ -223,6 +241,11 @@ namespace OutOfOffice_web.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Employees_PeoplePartnerId",
+                table: "Employees",
+                column: "PeoplePartnerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LeaveRequests_EmployeeId",
                 table: "LeaveRequests",
                 column: "EmployeeId");
@@ -230,8 +253,7 @@ namespace OutOfOffice_web.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_ProjectManagerId",
                 table: "Projects",
-                column: "ProjectManagerId",
-                unique: true);
+                column: "ProjectManagerId");
         }
 
         /// <inheritdoc />
@@ -269,6 +291,9 @@ namespace OutOfOffice_web.Migrations
 
             migrationBuilder.DropTable(
                 name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "PeoplePartners");
         }
     }
 }

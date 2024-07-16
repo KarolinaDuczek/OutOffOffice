@@ -41,10 +41,23 @@ namespace OutOfOffice_web.Data
                 .Property(e => e.Status)
                 .IsRequired();
             builder.Entity<Employee>()
-                .Property(e => e.PeoplePartner)
-                .IsRequired();
-            builder.Entity<Employee>()
                 .Property(e => e.OutOfOfficeBalance)
+                .IsRequired();
+
+            builder.Entity<Employee>()
+                .HasOne(employee => employee.PeoplePartner)
+                .WithMany(partner => partner.PartnerEmployees)
+                .HasForeignKey(employee => employee.PeoplePartnerId)
+                .HasPrincipalKey(partner => partner.Id);
+
+            builder.Entity<PeoplePartner>()
+                .HasKey(p => p.Id);
+            builder.Entity<PeoplePartner>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd()
+                .IsRequired();
+            builder.Entity<PeoplePartner>()
+                .Property(p => p.FullName)
                 .IsRequired();
 
             builder.Entity<LeaveRequest>()
@@ -126,16 +139,18 @@ namespace OutOfOffice_web.Data
                 .Property(e => e.Status)
                 .IsRequired();
 
-            builder.Entity<Employee>()
-                .HasOne(e => e.Project)
-                .WithOne(p => p.ProjectManager)
-                .HasForeignKey<Project>(p=>p.ProjectManagerId)
+            builder.Entity<Project>()
+                .HasOne(project => project.ProjectManager)
+                .WithMany(manager => manager.ManagerProjects)
+                .HasForeignKey(project=>project.ProjectManagerId)
+                .HasPrincipalKey(manager=>manager.Id)
                 .IsRequired();
         }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<ApprovalRequest> ApprovalRequests { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<PeoplePartner> PeoplePartners { get; set; }
 
     }
 }

@@ -34,7 +34,7 @@
                 <select asp-for="Position" class="form-control">
                     <option disabled selected>--- Select ---</option>
                     <option value="Specialist">Specialist</option>
-                    <option value="Manager">Manager</option>
+                    <option value="ProjectManager">Project Manager</option>
                     <option value="HRmanager">HR Manager</option>
                     <option value="CEO">CEO</option>
                     <option value="SeniorSpecialist">Senior Specialist</option>
@@ -52,8 +52,8 @@
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PeoplePartner" class="control-label">People Partner</label>
-                <input asp-for="PeoplePartner" class="form-control" />
+                <label asp-for="PeoplePartnerId" class="control-label">People Partner</label>
+                <select asp-for="PeoplePartner" class="form-control" asp-items="ViewBag.PeoplePartner"><option disabled selected>--- Select ---</option></select>
                 <span asp-validation-for="PeoplePartner" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -52,7 +52,8 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ProjectManagerId)
+                @Html.DisplayFor(modelItem => item.ProjectManagerId) --
+                @Html.DisplayFor(modelItem => item.ProjectManager.FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Comment)
