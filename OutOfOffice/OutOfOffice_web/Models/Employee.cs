@@ -15,11 +15,10 @@ public class Employee
     public Selection.Position? Position { get; set; }
     public Selection.Status? Status { get; set; }
     [Display(Name = "People Partner Id")]
-    public int? PeoplePartnerId { get; set; }
+    public int? PeoplePartner { get; set; }
     [Display(Name = "Out Of Office")]
     public double OutOfOfficeBalance { get; set; }
     public virtual ApprovalRequest? ApprovalRequest { get; set; }
-    public virtual PeoplePartner? PeoplePartner { get; set; }
     public virtual ICollection<Project> ManagerProjects { get; set; } = new List<Project>();
     public virtual ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
 }

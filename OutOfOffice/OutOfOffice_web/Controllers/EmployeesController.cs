@@ -69,7 +69,7 @@ namespace OutOfOffice_web.Controllers
             }
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id", employee.Id);
             //ViewData["PeoplePartner"] = new SelectList(_context.PeoplePartners, "Id", "FullName", employee.PeoplePartner);
-            ViewData["PeoplePartner"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartnerId);
+            ViewData["PeoplePartner"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartner);
 
 
             return View(employee);
@@ -130,7 +130,7 @@ namespace OutOfOffice_web.Controllers
             }
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id", employee.Id);
             //ViewData["PeoplePartner"] = new SelectList(_context.PeoplePartners, "Id", "FullName", employee.PeoplePartner);
-            ViewData["PeoplePartnerId"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartnerId);
+            ViewData["PeoplePartnerId"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartner);
 
 
             return View(employee);

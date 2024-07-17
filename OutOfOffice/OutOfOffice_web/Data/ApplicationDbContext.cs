@@ -41,23 +41,10 @@ namespace OutOfOffice_web.Data
                 .Property(e => e.Status)
                 .IsRequired();
             builder.Entity<Employee>()
-                .Property(e => e.OutOfOfficeBalance)
+                .Property(e => e.PeoplePartner)
                 .IsRequired();
-
             builder.Entity<Employee>()
-                .HasOne(employee => employee.PeoplePartner)
-                .WithMany(partner => partner.PartnerEmployees)
-                .HasForeignKey(employee => employee.PeoplePartnerId)
-                .HasPrincipalKey(partner => partner.Id);
-
-            builder.Entity<PeoplePartner>()
-                .HasKey(p => p.Id);
-            builder.Entity<PeoplePartner>()
-                .Property(p => p.Id)
-                .ValueGeneratedOnAdd()
-                .IsRequired();
-            builder.Entity<PeoplePartner>()
-                .Property(p => p.FullName)
+                .Property(e => e.OutOfOfficeBalance)
                 .IsRequired();
 
             builder.Entity<LeaveRequest>()
@@ -150,7 +137,6 @@ namespace OutOfOffice_web.Data
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<ApprovalRequest> ApprovalRequests { get; set; }
         public DbSet<Project> Projects { get; set; }
-        public DbSet<PeoplePartner> PeoplePartners { get; set; }
 
     }
 }
