@@ -101,7 +101,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Subdivision,Position,Status,PeoplePartnerId,OutOfOfficeBalance")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Subdivision,Position,Status,PeoplePartner,OutOfOfficeBalance")] Employee employee)
         {
             if (id != employee.Id)
             {
@@ -130,7 +130,7 @@ namespace OutOfOffice_web.Controllers
             }
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id", employee.Id);
             //ViewData["PeoplePartner"] = new SelectList(_context.PeoplePartners, "Id", "FullName", employee.PeoplePartner);
-            ViewData["PeoplePartnerId"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartner);
+            ViewData["PeoplePartner"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartner);
 
 
             return View(employee);
