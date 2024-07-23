@@ -14,6 +14,7 @@ namespace OutOfOffice_web.Data
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
+
             builder.Entity<IdentityUserRole<string>>()
                 .HasKey(x => new { x.UserId, x.RoleId });
             builder.Entity<IdentityUserLogin<string>>()
@@ -42,7 +43,7 @@ namespace OutOfOffice_web.Data
                 .IsRequired();
             builder.Entity<Employee>()
                 .Property(e => e.PeoplePartner)
-                .IsRequired();
+                .IsRequired(false);
             builder.Entity<Employee>()
                 .Property(e => e.OutOfOfficeBalance)
                 .IsRequired();
