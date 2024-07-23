@@ -15,11 +15,11 @@ namespace OutOfOffice_web.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<IdentityUserRole<string>>()
-                .HasNoKey();
+                .HasKey(x => new { x.UserId, x.RoleId });
             builder.Entity<IdentityUserLogin<string>>()
-                .HasNoKey();
+                .HasKey(x => x.UserId);
             builder.Entity<IdentityUserToken<string>>()
-                .HasNoKey();
+                .HasKey(x=>x.UserId);
 
             builder.Entity<Employee>()
                 .HasKey(e => e.Id);
