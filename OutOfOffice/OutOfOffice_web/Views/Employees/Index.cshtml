@@ -1,4 +1,5 @@
-﻿@model IEnumerable<OutOfOffice_web.Models.Employee>
+﻿@using System.Text
+@model IEnumerable<OutOfOffice_web.Models.Employee>
 
 @{
     ViewData["Title"] = "Index";
@@ -9,7 +10,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table id="employeesTable" class="display table">
     <thead>
         <tr>
             <th>
@@ -69,3 +70,17 @@
 }
     </tbody>
 </table>
+
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/2.1.0/js/dataTables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#employeesTable').DataTable();
+        });
+    </script>
+}
+@section Style
+{
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.dataTables.min.css" />
+}
