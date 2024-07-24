@@ -23,7 +23,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Employees
-        [Authorize]
+        [Authorize(Roles = "Administrator, HRManager, ProjectManager")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Employees.Include(e => e.ManagerProjects);
@@ -31,7 +31,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Employees/Details/5
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, HRManager, ProjectManager")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -51,7 +51,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Employees/Create
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, HRManager")]
         public IActionResult Create()
         {
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id");
@@ -65,7 +65,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, HRManager")]
         public async Task<IActionResult> Create([Bind("Id,FullName,Subdivision,Position,Status,PeoplePartner,OutOfOfficeBalance")] Employee employee)
         {
             if (ModelState.IsValid)
@@ -75,7 +75,6 @@ namespace OutOfOffice_web.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id", employee.Id);
-            //ViewData["PeoplePartner"] = new SelectList(_context.PeoplePartners, "Id", "FullName", employee.PeoplePartner);
             ViewData["PeoplePartner"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartner);
 
 
@@ -83,7 +82,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Employees/Edit/5
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, HRManager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -97,7 +96,6 @@ namespace OutOfOffice_web.Controllers
                 return NotFound();
             }
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id", employee.Id);
-            //ViewData["PeoplePartner"] = new SelectList(_context.PeoplePartners, "Id", "FullName", employee.PeoplePartner);
             ViewData["PeoplePartner"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName");
 
 
@@ -109,7 +107,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, HRManager")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Subdivision,Position,Status,PeoplePartner,OutOfOfficeBalance")] Employee employee)
         {
             if (id != employee.Id)
@@ -138,7 +136,6 @@ namespace OutOfOffice_web.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Id"] = new SelectList(_context.Projects, "Id", "Id", employee.Id);
-            //ViewData["PeoplePartner"] = new SelectList(_context.PeoplePartners, "Id", "FullName", employee.PeoplePartner);
             ViewData["PeoplePartner"] = new SelectList(_context.Employees.Where(e => e.Position == Models.Selection.Position.HRmanager), "Id", "FullName", employee.PeoplePartner);
 
 
@@ -146,7 +143,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Employees/Delete/5
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, HRManager")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -168,7 +165,7 @@ namespace OutOfOffice_web.Controllers
         // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, HRManager")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
@@ -185,14 +182,5 @@ namespace OutOfOffice_web.Controllers
         {
             return _context.Employees.Any(e => e.Id == id);
         }
-
-        //public int GetCurrentUserId()
-        //{
-        //    return User.Identity.GetUserId();
-        //}
-        //private bool EnsureIsUserContact(Contact)
-        //{
-        //    return EnsureIsUserContact().UserId == GetCurrentUserId();
-        //}
     }
 }

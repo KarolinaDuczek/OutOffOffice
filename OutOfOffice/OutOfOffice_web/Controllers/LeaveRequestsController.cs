@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using OutOfOffice_web.Models;
 
 namespace OutOfOffice_web.Controllers
 {
+    [Authorize]
     public class LeaveRequestsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +22,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.LeaveRequests.Include(l => l.Employee);
@@ -27,6 +30,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,6 +50,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Create
+        [Authorize("Administrator, Employee")]
         public IActionResult Create()
         {
             ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName");
@@ -57,6 +62,8 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize("Administrator, Employee")]
+
         public async Task<IActionResult> Create([Bind("Id,EmployeeId,AbsenceReason,StartDate,EndDate,Comment,Status")] LeaveRequest leaveRequest)
         {
             if (ModelState.IsValid)
@@ -70,6 +77,8 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Edit/5
+        [Authorize("Administrator, Employee")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -91,6 +100,8 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize("Administrator, Employee")]
+
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeId,AbsenceReason,StartDate,EndDate,Comment,Status")] LeaveRequest leaveRequest)
         {
             if (id != leaveRequest.Id)
@@ -123,6 +134,8 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Delete/5
+        [Authorize("Administrator, Employee")]
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,6 +157,8 @@ namespace OutOfOffice_web.Controllers
         // POST: LeaveRequests/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize("Administrator, Employee")]
+
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var leaveRequest = await _context.LeaveRequests.FindAsync(id);

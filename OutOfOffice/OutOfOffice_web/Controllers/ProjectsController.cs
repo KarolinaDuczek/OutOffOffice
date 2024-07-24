@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using OutOfOffice_web.Models;
 
 namespace OutOfOffice_web.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +22,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Projects
+        [Authorize(Roles = "Administrator, HRManager, ProjectManager")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Projects.Include(p => p.ProjectManager);
@@ -27,6 +30,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Projects/Details/5
+        [Authorize(Roles = "Administrator, HRManager, ProjectManager")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,6 +50,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Projects/Create
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public IActionResult Create()
         {
             ViewData["ProjectManagerId"] = new SelectList(_context.Employees.Where(e=>e.Position==Models.Selection.Position.ProjectManager), "Id", "FullName");
@@ -57,6 +62,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public async Task<IActionResult> Create([Bind("Id,ProjectType,StartDate,EndDate,ProjectManagerId,Comment,Status")] Project project)
         {
             if (ModelState.IsValid)
@@ -72,6 +78,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -93,6 +100,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectType,StartDate,EndDate,ProjectManagerId,Comment,Status")] Project project)
         {
             if (id != project.Id)
@@ -125,6 +133,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: Projects/Delete/5
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -146,6 +155,7 @@ namespace OutOfOffice_web.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var project = await _context.Projects.FindAsync(id);

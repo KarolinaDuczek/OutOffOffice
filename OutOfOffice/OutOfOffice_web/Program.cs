@@ -77,54 +77,6 @@ using(var scope = app.Services.CreateScope())
     }
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
-    string email = "admin@admin.com";
-    string password = "Admin123!";
-
-    if(await userManager.FindByEmailAsync(email) == null)
-    {
-        var user = new IdentityUser();
-        user.UserName = email;
-        user.Email = email;
-        user.EmailConfirmed = true;
-
-        await userManager.CreateAsync(user, password);
-
-        await userManager.AddToRoleAsync(user, "Administrator");
-    }
-
-    string email2 = "hrmanager@example.com";
-    string password2 = "Hrmanager123!";
-
-    if (await userManager.FindByEmailAsync(email2) == null)
-    {
-        var user2 = new IdentityUser();
-        user2.UserName = email;
-        user2.Email = email;
-        user2.EmailConfirmed = true;
-
-        await userManager.CreateAsync(user2, password2);
-
-        await userManager.AddToRoleAsync(user2, "HRManager");
-    }
-
-    string email3 = "projectmanager@example.com";
-    string password3 = "Projectmanager123!";
-
-    if (await userManager.FindByEmailAsync(email3) == null)
-    {
-        var user3 = new IdentityUser();
-        user3.UserName = email;
-        user3.Email = email;
-        user3.EmailConfirmed = true;
-
-        await userManager.CreateAsync(user3, password2);
-
-        await userManager.AddToRoleAsync(user3, "HRManager");
-    }
-}
+UserInitializer.Initialize(app);
 
 app.Run();
