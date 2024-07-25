@@ -12,11 +12,11 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Approver)
+            @Html.DisplayNameFor(model => model.Approvers)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Approver.FullName)
-        </dd>
+        @* <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Approvers.FullName)
+        </dd> *@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Status)
         </dt>
@@ -36,7 +36,7 @@
             @Html.DisplayFor(model => model.LeaveRequest.Id)
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |

@@ -50,7 +50,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Create
-        [Authorize("Administrator, Employee")]
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName");
@@ -62,7 +62,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize("Administrator, Employee")]
+        [Authorize]
 
         public async Task<IActionResult> Create([Bind("Id,EmployeeId,AbsenceReason,StartDate,EndDate,Comment,Status")] LeaveRequest leaveRequest)
         {
@@ -70,6 +70,19 @@ namespace OutOfOffice_web.Controllers
             {
                 _context.Add(leaveRequest);
                 await _context.SaveChangesAsync();
+
+                if(leaveRequest.Status == Models.Selection.RequestStatus.Submit)
+                {
+                    var employee = await _context.Employees.FirstOrDefaultAsync(a => a.Id == leaveRequest.EmployeeId);
+                    var approvalRequest = new ApprovalRequest
+                    {
+                        ApproverId = employee.PeoplePartner,
+                        LeaveRequestId = leaveRequest.Id,
+                        Status = Models.Selection.RequestStatus.New
+                    };
+                    _context.Add(approvalRequest);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName", leaveRequest.EmployeeId);
@@ -77,7 +90,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Edit/5
-        [Authorize("Administrator, Employee")]
+        [Authorize]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -100,7 +113,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize("Administrator, Employee")]
+        [Authorize]
 
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeId,AbsenceReason,StartDate,EndDate,Comment,Status")] LeaveRequest leaveRequest)
         {
@@ -127,6 +140,19 @@ namespace OutOfOffice_web.Controllers
                         throw;
                     }
                 }
+
+                if (leaveRequest.Status == Models.Selection.RequestStatus.Submit)
+                {
+                    var employee = await _context.Employees.FirstOrDefaultAsync(a => a.Id == leaveRequest.EmployeeId);
+                    var approvalRequest = new ApprovalRequest
+                    {
+                        ApproverId = employee.PeoplePartner,
+                        LeaveRequestId = leaveRequest.Id,
+                        Status = Models.Selection.RequestStatus.New
+                    };
+                    _context.Add(approvalRequest);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName", leaveRequest.EmployeeId);
@@ -134,7 +160,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Delete/5
-        [Authorize("Administrator, Employee")]
+        [Authorize]
 
         public async Task<IActionResult> Delete(int? id)
         {
@@ -157,7 +183,7 @@ namespace OutOfOffice_web.Controllers
         // POST: LeaveRequests/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize("Administrator, Employee")]
+        [Authorize]
 
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

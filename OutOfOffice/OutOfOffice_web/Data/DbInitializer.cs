@@ -45,7 +45,7 @@ public class DbInitializer
 
         var approvalRequests = new List<ApprovalRequest>
         {
-            new ApprovalRequest {ApproverId = 1, LeaveRequestId = 1, Status = Models.Selection.RequestStatus.Submit, Comment = "-" },
+            new ApprovalRequest {ApproverId = 1, LeaveRequestId = 1, Status = Models.Selection.RequestStatus.New, Comment = "-" },
             new ApprovalRequest {ApproverId = 1, LeaveRequestId = 2, Status = Models.Selection.RequestStatus.New, Comment = "-" },
         };
         foreach (var req in approvalRequests)

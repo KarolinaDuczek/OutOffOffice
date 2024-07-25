@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OutOfOffice_web.Data;
 
@@ -11,9 +12,11 @@ using OutOfOffice_web.Data;
 namespace OutOfOffice_web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240725093104_updateEmployeeEntityAndDefaultStatus")]
+    partial class updateEmployeeEntityAndDefaultStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace OutOfOffice_web.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ApprovalRequestEmployee", b =>
-                {
-                    b.Property<int>("ApprovalRequestsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ApproversId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ApprovalRequestsId", "ApproversId");
-
-                    b.HasIndex("ApproversId");
-
-                    b.ToTable("ApprovalRequestEmployee");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -232,6 +220,9 @@ namespace OutOfOffice_web.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApproverId")
+                        .IsUnique();
+
                     b.HasIndex("LeaveRequestId")
                         .IsUnique();
 
@@ -254,7 +245,8 @@ namespace OutOfOffice_web.Migrations
                     b.Property<double>("OutOfOfficeBalance")
                         .HasColumnType("float");
 
-                    b.Property<int>("PeoplePartner")
+                    b.Property<int?>("PeoplePartner")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("Position")
@@ -341,28 +333,21 @@ namespace OutOfOffice_web.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("ApprovalRequestEmployee", b =>
-                {
-                    b.HasOne("OutOfOffice_web.Models.ApprovalRequest", null)
-                        .WithMany()
-                        .HasForeignKey("ApprovalRequestsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OutOfOffice_web.Models.Employee", null)
-                        .WithMany()
-                        .HasForeignKey("ApproversId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("OutOfOffice_web.Models.ApprovalRequest", b =>
                 {
+                    b.HasOne("OutOfOffice_web.Models.Employee", "Approver")
+                        .WithOne("ApprovalRequest")
+                        .HasForeignKey("OutOfOffice_web.Models.ApprovalRequest", "ApproverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("OutOfOffice_web.Models.LeaveRequest", "LeaveRequest")
                         .WithOne("ApprovalRequest")
                         .HasForeignKey("OutOfOffice_web.Models.ApprovalRequest", "LeaveRequestId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Approver");
 
                     b.Navigation("LeaveRequest");
                 });
@@ -391,6 +376,8 @@ namespace OutOfOffice_web.Migrations
 
             modelBuilder.Entity("OutOfOffice_web.Models.Employee", b =>
                 {
+                    b.Navigation("ApprovalRequest");
+
                     b.Navigation("LeaveRequests");
 
                     b.Navigation("ManagerProjects");

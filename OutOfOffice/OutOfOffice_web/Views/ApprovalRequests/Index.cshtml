@@ -18,7 +18,10 @@
                 @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Approver)
+                @Html.DisplayNameFor(model => model.ApproverId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LeaveRequest.Employee)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Status)
@@ -39,8 +42,12 @@
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Approver.FullName)
+                @Html.DisplayFor(modelItem => item.ApproverId)
             </td>
+
+            <th>
+                @Html.DisplayFor(modelItem => item.LeaveRequest.Employee.FullName)
+            </th>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>

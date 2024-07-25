@@ -22,7 +22,9 @@ namespace OutOfOffice_web.Controllers
         // GET: ApprovalRequests
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ApprovalRequests.Include(a => a.Approver).Include(a => a.LeaveRequest);
+            var applicationDbContext = _context.ApprovalRequests
+                .Include(a => a.Approvers)
+                .Include(a => a.LeaveRequest).ThenInclude(a=>a.Employee);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,8 +37,8 @@ namespace OutOfOffice_web.Controllers
             }
 
             var approvalRequest = await _context.ApprovalRequests
-                .Include(a => a.Approver)
-                .Include(a => a.LeaveRequest)
+                .Include(a => a.Approvers)
+                .Include(a => a.LeaveRequest).ThenInclude(a => a.Employee)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (approvalRequest == null)
             {
@@ -49,7 +51,7 @@ namespace OutOfOffice_web.Controllers
         // GET: ApprovalRequests/Create
         public IActionResult Create()
         {
-            ViewData["ApproverId"] = new SelectList(_context.Employees, "Id", "FullName");
+            ViewData["Approvers"] = new SelectList(_context.Employees, "Id", "FullName");
             ViewData["LeaveRequestId"] = new SelectList(_context.LeaveRequests, "Id", "Id");
             return View();
         }
@@ -59,7 +61,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ApproverId,LeaveRequestId,Status,Comment")] ApprovalRequest approvalRequest)
+        public async Task<IActionResult> Create([Bind("Id,ApproverId,LeaveRequestId,Status,Comment,Approvers")] ApprovalRequest approvalRequest)
         {
             if (ModelState.IsValid)
             {
@@ -67,7 +69,7 @@ namespace OutOfOffice_web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApproverId"] = new SelectList(_context.Employees, "Id", "FullName", approvalRequest.ApproverId);
+            ViewData["Approvers"] = new SelectList(_context.Employees, "Id", "FullName", approvalRequest.ApproverId);
             ViewData["LeaveRequestId"] = new SelectList(_context.LeaveRequests, "Id", "Id", approvalRequest.LeaveRequestId);
             return View(approvalRequest);
         }
@@ -85,7 +87,7 @@ namespace OutOfOffice_web.Controllers
             {
                 return NotFound();
             }
-            ViewData["ApproverId"] = new SelectList(_context.Employees, "Id", "FullName", approvalRequest.ApproverId);
+            ViewData["Approvers"] = new SelectList(_context.Employees, "Id", "FullName", approvalRequest.Approvers);
             ViewData["LeaveRequestId"] = new SelectList(_context.LeaveRequests, "Id", "Id", approvalRequest.LeaveRequestId);
             return View(approvalRequest);
         }
@@ -95,7 +97,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ApproverId,LeaveRequestId,Status,Comment")] ApprovalRequest approvalRequest)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ApproverId,LeaveRequestId,Status,Comment,Approvers")] ApprovalRequest approvalRequest)
         {
             if (id != approvalRequest.Id)
             {
@@ -122,7 +124,7 @@ namespace OutOfOffice_web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApproverId"] = new SelectList(_context.Employees, "Id", "FullName", approvalRequest.ApproverId);
+            ViewData["Approvers"] = new SelectList(_context.Employees, "Id", "FullName", approvalRequest.Approvers);
             ViewData["LeaveRequestId"] = new SelectList(_context.LeaveRequests, "Id", "Id", approvalRequest.LeaveRequestId);
             return View(approvalRequest);
         }
@@ -136,7 +138,7 @@ namespace OutOfOffice_web.Controllers
             }
 
             var approvalRequest = await _context.ApprovalRequests
-                .Include(a => a.Approver)
+                .Include(a => a.Approvers)
                 .Include(a => a.LeaveRequest)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (approvalRequest == null)

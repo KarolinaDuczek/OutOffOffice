@@ -43,7 +43,7 @@ namespace OutOfOffice_web.Data
                 .IsRequired();
             builder.Entity<Employee>()
                 .Property(e => e.PeoplePartner)
-                .IsRequired(false);
+                .IsRequired(true);
             builder.Entity<Employee>()
                 .Property(e => e.OutOfOfficeBalance)
                 .IsRequired();
@@ -70,7 +70,8 @@ namespace OutOfOffice_web.Data
                 .HasMaxLength(100);
             builder.Entity<LeaveRequest>()
                 .Property(e => e.Status)
-                .IsRequired();
+                .IsRequired()
+                .HasDefaultValue(Models.Selection.RequestStatus.New);
 
             builder.Entity<LeaveRequest>()
                 .HasOne(request => request.Employee)
@@ -86,7 +87,8 @@ namespace OutOfOffice_web.Data
                 .IsRequired();
             builder.Entity<ApprovalRequest>()
                 .Property(e => e.Status)
-                .IsRequired();
+                .IsRequired()
+                .HasDefaultValue(Models.Selection.RequestStatus.New);
             builder.Entity<ApprovalRequest>()
                 .Property(e => e.Comment)
                 .HasMaxLength(100);
@@ -98,10 +100,8 @@ namespace OutOfOffice_web.Data
                 .OnDelete(DeleteBehavior.NoAction)
                 .IsRequired();
             builder.Entity<ApprovalRequest>()
-                .HasOne(approval => approval.Approver)
-                .WithOne(employee => employee.ApprovalRequest)
-                .HasForeignKey<ApprovalRequest>(req => req.ApproverId)
-                .IsRequired();
+                .HasMany(approval => approval.Approvers)
+                .WithMany(employee => employee.ApprovalRequests);
 
             builder.Entity<Project>()
                 .HasKey(e => e.Id);
