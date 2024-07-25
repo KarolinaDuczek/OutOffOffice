@@ -50,7 +50,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Create
-        [Authorize]
+        [Authorize(Roles ="Administrator,Employee")]
         public IActionResult Create()
         {
             ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName");
@@ -62,7 +62,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = "Administrator,Employee")]
 
         public async Task<IActionResult> Create([Bind("Id,EmployeeId,AbsenceReason,StartDate,EndDate,Comment,Status")] LeaveRequest leaveRequest)
         {
@@ -90,7 +90,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Edit/5
-        [Authorize]
+        [Authorize(Roles = "Administrator,Employee")]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -113,7 +113,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = "Administrator,Employee")]
 
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeId,AbsenceReason,StartDate,EndDate,Comment,Status")] LeaveRequest leaveRequest)
         {
@@ -160,7 +160,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: LeaveRequests/Delete/5
-        [Authorize]
+        [Authorize(Roles = "Administrator,Employee")]
 
         public async Task<IActionResult> Delete(int? id)
         {
@@ -183,7 +183,7 @@ namespace OutOfOffice_web.Controllers
         // POST: LeaveRequests/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = "Administrator,Employee")]
 
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

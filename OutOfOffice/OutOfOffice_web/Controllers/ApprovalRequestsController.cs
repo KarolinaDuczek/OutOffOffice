@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using OutOfOffice_web.Models;
 
 namespace OutOfOffice_web.Controllers
 {
+    [Authorize]
     public class ApprovalRequestsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +22,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: ApprovalRequests
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.ApprovalRequests
@@ -29,6 +32,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: ApprovalRequests/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -49,6 +53,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: ApprovalRequests/Create
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
             ViewData["Approvers"] = new SelectList(_context.Employees, "Id", "FullName");
@@ -61,6 +66,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create([Bind("Id,ApproverId,LeaveRequestId,Status,Comment,Approvers")] ApprovalRequest approvalRequest)
         {
             if (ModelState.IsValid)
@@ -75,6 +81,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: ApprovalRequests/Edit/5
+        [Authorize(Roles = "Administrator,HRManager,ProjectManager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -97,6 +104,7 @@ namespace OutOfOffice_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,HRManager,ProjectManager")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ApproverId,LeaveRequestId,Status,Comment,Approvers")] ApprovalRequest approvalRequest)
         {
             if (id != approvalRequest.Id)
@@ -130,6 +138,7 @@ namespace OutOfOffice_web.Controllers
         }
 
         // GET: ApprovalRequests/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

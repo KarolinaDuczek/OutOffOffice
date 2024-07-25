@@ -34,7 +34,7 @@ public class DbInitializer
 
         var leaveRequests = new List<LeaveRequest>
         {
-            new LeaveRequest {EmployeeId = 2, AbsenceReason = Models.Selection.AbsenceReason.SickLeave, StartDate = DateTime.Today, EndDate = DateTime.Today.AddDays(7), Comment = "-", Status = Models.Selection.RequestStatus.Submit },
+            new LeaveRequest {EmployeeId = 2, AbsenceReason = Models.Selection.AbsenceReason.SickLeave, StartDate = DateTime.Today, EndDate = DateTime.Today.AddDays(7), Comment = "-", Status = Models.Selection.RequestStatus.New },
             new LeaveRequest {EmployeeId = 3, AbsenceReason = Models.Selection.AbsenceReason.VacationLeave, StartDate = DateTime.Today.AddDays(12), EndDate = DateTime.Today.AddDays(26), Comment = "-", Status = Models.Selection.RequestStatus.New }
         };
         foreach (var request in leaveRequests)
